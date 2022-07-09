@@ -1,5 +1,5 @@
 import sys
-
+from settings import *
 import matplotlib.pyplot as plt
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -7,18 +7,19 @@ from psycopg2 import sql
 
 import matplotlib
 from PyQt5.QtWidgets import QVBoxLayout
-matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import matplotlib.ticker as ticker
+matplotlib.use('Qt5Agg')
 
 
 role = 'login'
+id = 0
 
 def loginCheck(login:str, passwd:str, user = 'login') -> [str, str, ()]: # [ФИО пользователя, роль пользователя, информация о сотруднике]
     login = 'Miheev'
     passwd = 'StenOptiAvto6'
-    with psycopg2.connect(dbname='postgres', user=user, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=user, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 stmt = sql.SQL(f'SELECT password, fullname, position, status, id_employee FROM employee WHERE login=%s')
@@ -43,13 +44,15 @@ def loginCheck(login:str, passwd:str, user = 'login') -> [str, str, ()]: # [ФИ
         role = 'administrator'
     elif dat[0][2] == 'Заведующий хозяйством':
         role = 'head_household'
+    global id
+    id = dat[0][4]
 
     return [dat[0][1], dat[0][2], getInfoEmployee(dat[0][4])]
 
 
 def getInfoEmployee(id_employee: int) -> str: # возвращает информацию о сотруднике по идентификатору
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 stmt = sql.SQL(f'SELECT * FROM employee_info(%s)')
@@ -62,7 +65,7 @@ def getInfoEmployee(id_employee: int) -> str: # возвращает инфор�
 
 def getInfoAnimal(id_animal: int) -> (): # информация о конкретном животном
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 tmp = sql.SQL(f'SELECT * FROM animal_info(%s)')
@@ -75,7 +78,7 @@ def getInfoAnimal(id_animal: int) -> (): # информация о конкре�
 
 def AddApplication(typeApplication: str, data: [], employee: str): # запрос на добавление заявки
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
            try:
                 tmp = sql.SQL(f'SELECT * FROM add_application(%s, %s, %s)')
@@ -88,7 +91,7 @@ def AddApplication(typeApplication: str, data: [], employee: str): # запро�
 
 def listSickAndHealthyAnimals(isHealthy: bool): # возвращает список больных или здоровых животных
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 if isHealthy:
@@ -104,7 +107,7 @@ def listSickAndHealthyAnimals(isHealthy: bool): # возвращает спис�
 
 def listApplications(typeApplication: str): # возвращает все заявки
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor: # cursor_factory=DictCursor)
             try:
                 tmp = sql.SQL(f'SELECT * FROM get_applications(%s)')
@@ -117,7 +120,7 @@ def listApplications(typeApplication: str): # возвращает все зая
 
 def listAnimalsFromApplication(keyApplication: int): # Список животных с заявки
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(ddbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 sql1 = 'select numberanimal from clarification_to_app where keyapplication = %s'
@@ -130,7 +133,7 @@ def listAnimalsFromApplication(keyApplication: int): # Список животн
 
 def updateFeedAndRmApplication(numAndFeed: {}, numApplication):
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 sql1 = 'UPDATE animal SET key_feed = %s WHERE numberanimal = %s'
@@ -262,7 +265,7 @@ class MplCanvas(FigureCanvasQTAgg):
 
 def listAppInspection():
     global role
-    with psycopg2.connect(dbname='postgres', user=role, host='localhost') as connect:
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
             try:
                 sql = 'SELECT * FROM all_app_inspection'
@@ -273,5 +276,19 @@ def listAppInspection():
                 print(e)
 
 
+def inspect(numAnimal: int, numApp: int, status: str):
+    global role
+    with psycopg2.connect(dbname=database, user=role, host=host) as connect:
+        with connect.cursor() as cursor:
+            try:
+                sql = 'SELECT * FROM inspect(%s, %s, %s, %s)'
+                cursor.execute(sql, (numApp, numAnimal, status, id))
+                dat = cursor.fetchall()
+                return dat
+            except psycopg2.Error as e:
+                print(e)
+
+
 #if __name__ == '__main__':
-#    connect()
+#    loginCheck('fdfd', 'fdfdf')
+#    inspect(1, 5, 'Здоровое')

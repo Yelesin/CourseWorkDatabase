@@ -1,0 +1,2 @@
+database = 'postgres'
+host = 'localhost'

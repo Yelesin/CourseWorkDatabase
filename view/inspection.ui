@@ -270,11 +270,6 @@
           <string>Здоровое</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Списанное</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
@@ -341,7 +336,7 @@
          <string notr="true">color: #B15B2E;</string>
         </property>
         <property name="text">
-         <string>Инфа о животном</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -415,7 +410,7 @@
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -453,7 +448,7 @@
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -491,7 +486,7 @@
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

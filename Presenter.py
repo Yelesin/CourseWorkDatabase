@@ -442,10 +442,11 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
         super().__init__()
         self.form = Ui_InspectionWindow()
         self.form.setupUi(self)
+
         self.fullname = fullname
         self.openWindow()
         self.form.animal_box.currentTextChanged.connect(self.changeInfo)
-
+        self.form.pushButton.clicked.connect(self.btnInspectionClicked)
 
 
     def openWindow(self):
@@ -453,7 +454,14 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
         self.setWindowIcon(QIcon('view/icons/page/stethoscope.png'))
         self.form.employee_box.addItem(self.fullname)
         dat = model.listAppInspection()
+        if dat == []:
+            self.isEmpty = True
+            self.showMessage('Отсутствуют заявки на осмотр !')
+            return
+        else:
+            self.isEmpty = False
         self.data = dat
+        self.form.animal_box.clear()
         for row in dat:
             info = f'Заявка на осмотр № {row[0]}, животное номер: {row[1]}'
             self.form.animal_box.addItem(info)
@@ -461,6 +469,10 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
 
 
     def changeInfo(self):
+
+        if self.isEmpty:
+            return
+
         numAnimal = int(self.form.animal_box.currentText().split(':')[-1])
         for row in self.data:
             if numAnimal in row:
@@ -504,6 +516,30 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
         self.form.img_animal_1.setPixmap(QPixmap(images_animal[animal]))
         self.form.img_feed_1.setPixmap(QPixmap(images_feed[feed]))
         self.form.img_gender_1.setPixmap(QPixmap(images_gender[gender]))
+
+
+    def showMessage(self, text: str):
+        msg = QMessageBox()
+        msg.setWindowTitle("Изменения")
+        msg.setText(text)
+        msg.setIcon(QMessageBox.Warning)
+        msg.exec_()
+
+
+    def btnInspectionClicked(self):
+        if self.isEmpty:
+            return
+        row = self.form.animal_box.currentText()
+        numAnimal = int(row.split(':')[-1])
+        numApp = int(row.split('№')[1][1])
+        status = self.form.status_box.currentText()
+        print(status)
+        try:
+            model.inspect(numAnimal, numApp, status)
+            self.showMessage('Изменения успешно внесены !')
+            self.openWindow()
+        except:
+            return
 
 
 if __name__ == '__main__':
