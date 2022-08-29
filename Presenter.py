@@ -30,16 +30,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.main_form.img_house_hold.setPixmap(QPixmap(self.images[3]))
 
 
-    def openWindow(self, username, role, info):  # вывод информации о сотруднике и блокирование страниц инных пользователей
+    def openWindow(self, role, position, info):  # вывод информации о сотруднике и блокирование страниц инных пользователей
 
-        roles = {'Ветеринар': 0, 'Рабочий': 1, 'Администратор': 2, 'Заведующий хозяйством': 3}
-        self.index = roles[role]
-        self.role = role
-        self.username = username
+        positions = {'Ветеринар': 0, 'Рабочий': 1, 'Администратор': 2, 'Заведующий хозяйством': 3}
+        self.index = positions[position]
+        self.position = position
+        self.username = info[0]
 
         self.main_form.tabWidget.setCurrentIndex(self.index)
         if self.index == 0:
-            self.main_form.lbl_hi_0.setText(f'Здравствуйте, {username}!')
+            self.main_form.lbl_hi_0.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_0.setText(self.prepareInfo(info))
             self.disableTabs([1,2,3])
             self.main_form.btn_application.clicked.connect(self.App_btn)
@@ -50,24 +50,24 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.main_form.btn_inspection.clicked.connect(self.Inspection_btn)
 
         elif self.index == 1:
-            self.main_form.lbl_hi_1.setText(f'Здравствуйте, {username}!')
+            self.main_form.lbl_hi_1.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_1.setText(self.prepareInfo(info))
             self.disableTabs([0, 2, 3])
         elif self.index == 2:
-            self.main_form.lbl_hi2_2.setText(f'Здравствуйте, {username}!')
+            self.main_form.lbl_hi2_2.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_2.setText(self.prepareInfo(info))
             self.disableTabs([1, 0, 3])
         elif self.index == 3:
-            self.main_form.lbl_hi_3.setText(f'Здравствуйте, {username}!')
+            self.main_form.lbl_hi_3.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_3.setText(self.prepareInfo(info))
             self.disableTabs([1, 2, 0])
 
     def App_btn(self):
-        self.app_form = ApplicationForm(self.role, self.username)
+        self.app_form = ApplicationForm(self.position, self.username)
         self.app_form.show()
 
     def Show_list_animals(self):
-        self.animalsList = ListAnimalsForm(self.role)
+        self.animalsList = ListAnimalsForm(self.position)
         self.animalsList.show()
 
     def Change_feed_btn(self):
@@ -103,6 +103,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.main_form.tabWidget.setTabEnabled(i, False)
 
 
+    def closeEvent(self, event) -> None:
+        model.closeConnection()
+
+
+
+
 class LoginForm(QMainWindow, Ui_Login_form):
     def __init__(self):
         super().__init__()
@@ -120,20 +126,28 @@ class LoginForm(QMainWindow, Ui_Login_form):
 
 
     def confirmPushedLogin(self):
-        #self.login.lineEdit_login.setText('Miheev')
-        #self.login.lineEdit_password.setText('StenOptiAvto6')
         login = self.login.lineEdit_login.text()
         passwd = self.login.lineEdit_password.text()
 
         result = model.loginCheck(login, passwd)
+
         if result == -1:
-            self.login.lbl_error.setText('Error. Wrong data')
+            self.login.lbl_error.setText('Ошибка. Такого сотрудника не существует !')
+        elif result == -2:
+            self.login.lbl_error.setText('Ошибка. Данный сотрудник не работает !')
+        elif result == -3:
+            self.login.lbl_error.setText('Ошибка. Неверный пароль !')
         else:
+            role, position, info = result[0], result[1], result[2]
             login_window.close()
+            model.createConnection(role)
             self.main = MainForm()
-            print(result)
-            self.main.openWindow(result[0], result[1], result[2])
+            self.main.openWindow(role, position, info)
             self.main.show()
+
+
+    def closeEvent(self, event) -> None:
+        model.closeConnection()
 
 
 class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
@@ -543,7 +557,9 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
 
 
 if __name__ == '__main__':
+    model.createConnection('login')
     app = QApplication(sys.argv)
     login_window = LoginForm()
     login_window.show()
+
     sys.exit(app.exec_())

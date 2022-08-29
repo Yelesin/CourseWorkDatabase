@@ -13,27 +13,46 @@ import matplotlib.ticker as ticker
 matplotlib.use('Qt5Agg')
 
 
-role = 'login'
-id = 0
+__connection = object
+__cursor = object
+
+
+def createConnection(role):
+    global __connection, __cursor
+    try:
+        __connection = psycopg2.connect(dbname=database, user=role, host=host)
+        __cursor = __connection.cursor()
+        print(f'Connection with role {role} successful !')
+    except psycopg2.Error as e:
+        print(e)
+
+
+def closeConnection():
+    global __connection, __cursor
+    __cursor.close()
+    __connection.close()
+    print('Connection closed !')
+
 
 def loginCheck(login:str, passwd:str, user = 'login') -> [str, str, ()]: # [ФИО пользователя, роль пользователя, информация о сотруднике]
     login = 'Miheev'
     passwd = 'StenOptiAvto6'
-    with psycopg2.connect(dbname=database, user=user, host=host) as connect:
-        with connect.cursor() as cursor:
-            try:
-                stmt = sql.SQL(f'SELECT password, fullname, position, status, id_employee FROM employee WHERE login=%s')
-            except psycopg2.Error as e:
-                print(e)
+    global __connection, __cursor
+    try:
+        stmt = sql.SQL(f'SELECT password, fullname, position, status, id_employee FROM employee WHERE login=%s')
+    except psycopg2.Error as e:
+        print(e)
 
-            cursor.execute(stmt, (login,))
-            dat = cursor.fetchall()
-            if len(dat) == 0:               # в случае, если логин неправильный, то запрос вернёт пустой массив
-                print('No employee')
-                return -1
-            else:
-                if passwd != dat[0][0] or dat[0][3] == 'Не работает':
-                    return -1
+    __cursor.execute(stmt, (login,))
+    dat = __cursor.fetchall()
+    if len(dat) == 0:               # в случае, если логин неправильный, то запрос вернёт пустой массив
+        print('No employee')
+        return -1
+    else:
+        if dat[0][3] == 'Не работает':  # проверка работает ли сотрудник
+            return -2
+        elif passwd != dat[0][0]:       # проверка пароля
+            return -3
 
     global role
     if dat[0][2] == 'Ветеринар':
@@ -44,10 +63,11 @@ def loginCheck(login:str, passwd:str, user = 'login') -> [str, str, ()]: # [ФИ
         role = 'administrator'
     elif dat[0][2] == 'Заведующий хозяйством':
         role = 'head_household'
-    global id
-    id = dat[0][4]
 
-    return [dat[0][1], dat[0][2], getInfoEmployee(dat[0][4])]
+    id = dat[0][4]
+    fullname = dat[0][1]
+    position = dat[0][2]
+    return [role, position, getInfoEmployee(id)]
 
 
 def getInfoEmployee(id_employee: int) -> str: # возвращает информацию о сотруднике по идентификатору
@@ -63,6 +83,7 @@ def getInfoEmployee(id_employee: int) -> str: # возвращает инфор�
             return dat[0]
 
 
+
 def getInfoAnimal(id_animal: int) -> (): # информация о конкретном животном
     global role
     with psycopg2.connect(dbname=database, user=role, host=host) as connect:
@@ -76,7 +97,7 @@ def getInfoAnimal(id_animal: int) -> (): # информация о конкре�
                 print(e)
 
 
-def AddApplication(typeApplication: str, data: [], employee: str): # запрос на добавление заявки
+def AddApplication(typeApplication: str, data: [], employee: str) -> int: # запрос на добавление заявки
     global role
     with psycopg2.connect(dbname=database, user=role, host=host) as connect:
         with connect.cursor() as cursor:
@@ -87,6 +108,7 @@ def AddApplication(typeApplication: str, data: [], employee: str): # запро�
                 return 1
            except psycopg2.Error as e:
                print(e)
+               return -1
 
 
 def listSickAndHealthyAnimals(isHealthy: bool): # возвращает список больных или здоровых животных
