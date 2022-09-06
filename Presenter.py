@@ -1,7 +1,7 @@
 import sys
 import model
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QVBoxLayout, QComboBox
 from PyQt5.QtGui import QIcon, QPixmap
 import PyQt5.QtCore
 
@@ -11,7 +11,15 @@ from view.application import Ui_ApplicationWindow
 from view.list_animals import Ui_ListAnimalsWindow
 from view.change_feed_many import Ui_ChangeFeedSecond
 from view.graphs import Ui_GraphWindow
-from view.inspection import Ui_InspectionWindow
+from view.inspection_mod import Ui_InspectionWindow
+
+
+def showMessage(title: str, text: str):
+    msg = QMessageBox()
+    msg.setWindowTitle(title)
+    msg.setText(text)
+    msg.setIcon(QMessageBox.Warning)
+    msg.exec_()
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
@@ -73,7 +81,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def Change_feed_btn(self):
         typeApplication = 'Заявка на изменение типа корма'
         self.change_feed = ChangeFeedForm(self.username, typeApplication)
-        self.change_feed.show()
+        if self.change_feed.checkApplications() != -1:
+            self.change_feed.callFunctions()
+            self.change_feed.show()
 
     def Graphs_age_dead_btn(self):
         self.graphs = GraphForm('Смертность от возраста')
@@ -86,7 +96,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     def Inspection_btn(self):
         self.inspection = InspectionForm(self.username)
-        self.inspection.show()
+        if self.inspection.checkApplications() != -1:
+            self.inspection.calFunctions()
+            self.inspection.show()
 
     def prepareInfo(self, info):
         res = ''
@@ -97,16 +109,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         res += f'Количество осмотров за год: {info[6]}'
         return res
 
-
     def disableTabs(self, indexes: []):
         for i in indexes:
             self.main_form.tabWidget.setTabEnabled(i, False)
 
-
     def closeEvent(self, event) -> None:
         model.closeConnection()
-
-
 
 
 class LoginForm(QMainWindow, Ui_Login_form):
@@ -128,9 +136,7 @@ class LoginForm(QMainWindow, Ui_Login_form):
     def confirmPushedLogin(self):
         login = self.login.lineEdit_login.text()
         passwd = self.login.lineEdit_password.text()
-
         result = model.loginCheck(login, passwd)
-
         if result == -1:
             self.login.lbl_error.setText('Ошибка. Такого сотрудника не существует !')
         elif result == -2:
@@ -145,9 +151,9 @@ class LoginForm(QMainWindow, Ui_Login_form):
             self.main.openWindow(role, position, info)
             self.main.show()
 
-
     def closeEvent(self, event) -> None:
         model.closeConnection()
+
 
 
 class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
@@ -186,10 +192,10 @@ class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
         numberAnimal = self.form.SelectNumberAnimal.value()
         info_animal = model.getInfoAnimal(int(numberAnimal))
         if info_animal is None:
-            self.showMessage("Выбранного животного не существует !")
+            showMessage('Ошибка', "Выбранного животного не существует !")
             return
         elif info_animal[0] in self.id_animals:
-            self.showMessage('Выбранное животное уже в списке !')
+            showMessage("Ошибка", 'Выбранное животное уже в списке !')
             return
         else:
             self.id_animals.append(int(info_animal[0]))
@@ -213,21 +219,14 @@ class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
             self.form.tableWidget.selectionModel().clearCurrentIndex()
 
 
-    def showMessage(self, text: str):
-        msg = QMessageBox()
-        msg.setWindowTitle("Предупреждение")
-        msg.setText(text)
-        msg.setIcon(QMessageBox.Warning)
-        msg.exec_()
-
     def clickConfirm(self):
         if self.id_animals == []:
-            self.showMessage('Отсутствуют животные в списке !')
+            showMessage("Ошибка", 'Отсутствуют животные в списке !')
             return
         else:
             res = model.AddApplication(self.form.SelectTypeApp.currentText(), self.id_animals, self.form.SelectEmployee.currentText())
             if res == -1:
-                self.showMessage('Не удалось отправить заявку. Проверьте данные !')
+                showMessage("Ошибка", 'Не удалось отправить заявку. Проверьте данные !')
                 return
             else:
                 self.form.tableWidget.clear()
@@ -235,7 +234,7 @@ class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
                 self.form.tableWidget.setColumnCount(0)
                 self.id_animals = []
                 self.form.SelectNumberAnimal.setValue(1)
-                self.showMessage('Заявка успешно отправлена !')
+                showMessage("Уведомление", 'Заявка успешно отправлена !')
 
 
 class ListAnimalsForm(QMainWindow, Ui_ListAnimalsWindow):
@@ -305,6 +304,9 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
         self.feed = {'Овёс': 0, 'Пшеница': 1, 'Морковка': 2, 'Биокорм': 3, 'Комбикорм': 4}
         self.typeApp = typeApplication
         self.username = username
+
+
+    def callFunctions(self):
         self.OpenWindow()
         self.settingTable()
         self.changeApp()
@@ -312,22 +314,25 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
         self.form.btn_confirm.clicked.connect(self.btnConfirmClick)
 
 
-
-    def OpenWindow(self):
-        self.setWindowTitle('Изменить тип корма')
-        self.setWindowIcon(QIcon('view/icons/page/meal.png'))
-        self.form.selectEmployee.insertItem(0, self.username)
+    def checkApplications(self):
         self.applications = model.listApplications(self.typeApp)
         list = [i for i in self.applications if 'Заявка на изменение типа корма' in i]
         if list == []:
-            self.showMessage('Нет доступных заявок !')
-            self.isEmpty = True
+            showMessage("Ошибка", 'Нет доступных заявок !')
+            return -1
         else:
             for i in range(len(list)):
                 typeApplication, numApplication = list[i][0], list[i][1]
                 self.numApp = numApplication
                 text = f'{typeApplication} № {numApplication}'
-                self.form.selectApp.insertItem(i,text)
+                self.form.selectApp.insertItem(i, text)
+
+
+    def OpenWindow(self):
+        self.setWindowTitle('Изменить тип корма')
+        self.setWindowIcon(QIcon('view/icons/page/meal.png'))
+        self.form.selectEmployee.insertItem(0, self.username)
+
 
 
     def settingTable(self):
@@ -340,8 +345,6 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
 
 
     def changeApp(self):
-        if self.isEmpty:
-            return
         self.form.tableWidget.clear()
         self.form.tableWidget.setRowCount(0)
         self.settingTable()
@@ -374,8 +377,6 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
 
 
     def btnConfirmClick(self):
-        if self.isEmpty:
-            return
         data = {}
         rows = self.form.tableWidget.rowCount()
         columns = self.form.tableWidget.columnCount()
@@ -385,15 +386,9 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
             data[numAnimal] = self.feed[feed] + 1
         res = model.updateFeedAndRmApplication(data, self.numApp)
         if res == 1:
-            self.showMessage('Изменения успешно внесены !')
+            showMessage("Уведомление", 'Изменения успешно внесены !')
             self.close()
 
-    def showMessage(self, text: str):
-        msg = QMessageBox()
-        msg.setWindowTitle("Изменения")
-        msg.setText(text)
-        msg.setIcon(QMessageBox.Warning)
-        msg.exec_()
 
 
 class GraphForm(QMainWindow, Ui_GraphWindow):
@@ -451,6 +446,126 @@ class GraphForm(QMainWindow, Ui_GraphWindow):
             model.item(i).setEnabled(False)
 
 
+
+class InspectionForm(QMainWindow, Ui_InspectionWindow):
+    def __init__(self, username):
+        super().__init__()
+        self.form = Ui_InspectionWindow()
+        self.form.setupUi(self)
+        self.username = username
+
+
+    def calFunctions(self):
+        self.openWindow()
+        self.fillTable()
+        self.form.SelectApp.currentTextChanged.connect(self.fillTable)
+        self.form.btn_confirm.clicked.connect(self.inspect)
+
+
+    def checkApplications(self):
+        if len(self.getDataFromComboboxes()) != 0:
+            return 1
+        else:
+            showMessage('Ошибка', "Отстутсвуют заявки на осмотр !")
+            return -1
+
+
+    def openWindow(self):
+        self.form.SelectApp.clear()
+        self.setWindowTitle('Осмотр')
+        self.setWindowIcon(QIcon('view/icons/page/stethoscope.png'))
+        self.form.SelectEmployee.addItem(self.username)
+        self.data = model.listAppInspection()
+        if len(self.data) != 0:
+            return -1
+        app = self.getListApplications()
+        for data in app:
+            self.form.SelectApp.addItem(str(data))
+
+
+    def getListApplications(self) -> []:
+        applications = []
+        for i in self.data:
+            if i[0] not in applications:
+                applications.append(i[0])
+        return applications
+
+
+    def setNotEnabled(self, indexes: []):
+        model = self.form.tableWidget.model()
+        for i in indexes:
+            model.item(i).setEnabled(False)
+
+
+    def settingTable(self) -> None:
+        columns = 5
+        self.form.tableWidget.setColumnCount(columns)
+        header = self.form.tableWidget.horizontalHeader()
+        for i in range(columns):
+            if i != columns -1:
+                header.setSectionResizeMode(i, QHeaderView.Stretch)
+            else:
+                header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
+        self.form.tableWidget.setHorizontalHeaderLabels(['Номер','Тип', 'Пол', 'Возраст', 'Статус'])
+
+
+    def AddValueToTable(self, numberAnimal):
+        rowCount = self.form.tableWidget.rowCount()
+        info = model.getInfoAnimal(numberAnimal)
+        self.form.tableWidget.insertRow(rowCount)
+        self.form.tableWidget.setRowHeight(rowCount, 40)
+        for i in range(len(info)-1):
+            item = QTableWidgetItem(f'{info[i]}')
+            item.setTextAlignment(PyQt5.QtCore.Qt.AlignCenter)
+            self.form.tableWidget.setItem(rowCount, i, item)
+
+        box = QComboBox()
+        box.addItems(['Здоровое', 'Больное', 'В заявку на списание'])
+        for row in self.data:
+            if row[1] == numberAnimal:
+                status = row[2]
+        if status == 'Здоровое':
+            box.setCurrentIndex(0)
+        elif status == 'Больное':
+            box.setCurrentIndex(1)
+        self.form.tableWidget.setCellWidget(rowCount, len(info)-1, box)
+
+
+    def fillTable(self):
+        self.form.tableWidget.clear()
+        self.form.tableWidget.setRowCount(0)
+        self.settingTable()
+        numApplication = self.form.SelectApp.currentText()
+        try:
+            numApplication = int(numApplication)
+        except:
+            return
+        for i in self.data:
+            if i[0] == numApplication:
+                self.AddValueToTable(i[1])
+
+
+    def getDataFromComboboxes(self):
+        rows = self.form.tableWidget.rowCount()
+        values = {}
+        for i in range(rows):
+            values[self.form.tableWidget.item(i,0).text()] = self.form.tableWidget.cellWidget(i, 4).currentText()
+        return values
+
+
+    def inspect(self):
+        data = self.getDataFromComboboxes()
+        numAnimals = [int(i) for i in data.keys()]
+        statuses = [i for i in data.values()]
+        application = int(self.form.SelectApp.currentText())
+        model.inspect(self.username, application, numAnimals, statuses)
+        showMessage('Уведомление', "Заявка успешно обработана !")
+        self.openWindow()
+        self.fillTable()
+
+
+
+"""
 class InspectionForm(QMainWindow, Ui_InspectionWindow):
     def __init__(self, fullname: str):
         super().__init__()
@@ -532,13 +647,6 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
         self.form.img_gender_1.setPixmap(QPixmap(images_gender[gender]))
 
 
-    def showMessage(self, text: str):
-        msg = QMessageBox()
-        msg.setWindowTitle("Изменения")
-        msg.setText(text)
-        msg.setIcon(QMessageBox.Warning)
-        msg.exec_()
-
 
     def btnInspectionClicked(self):
         if self.isEmpty:
@@ -554,7 +662,7 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
             self.openWindow()
         except:
             return
-
+"""
 
 if __name__ == '__main__':
     model.createConnection('login')
