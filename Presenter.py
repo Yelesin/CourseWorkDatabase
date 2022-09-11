@@ -47,6 +47,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         self.main_form.tabWidget.setCurrentIndex(self.index)
         if self.index == 0:
+            #ветеринар
             self.main_form.lbl_hi_0.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_0.setText(self.prepareInfo(info))
             self.disableTabs([1,2,3])
@@ -58,9 +59,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.main_form.btn_inspection.clicked.connect(self.Inspection_btn)
 
         elif self.index == 1:
+            #рабочий
             self.main_form.lbl_hi_1.setText(f'Здравствуйте, {self.username}!')
-            self.main_form.lbl_descript_1.setText(self.prepareInfo(info))
             self.disableTabs([0, 2, 3])
+            self.main_form.lbl_descript_1.setText(self.prepareInfo(info))
+            self.main_form.btn_application_3.clicked.connect(self.App_btn)
+            self.main_form.btn_list_animals_3.clicked.connect(self.Show_list_animals)
+
         elif self.index == 2:
             self.main_form.lbl_hi2_2.setText(f'Здравствуйте, {self.username}!')
             self.main_form.lbl_descript_2.setText(self.prepareInfo(info))
@@ -95,7 +100,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
 
     def Inspection_btn(self):
-        self.inspection = InspectionForm(self.username)
+        self.inspection = InspectionForm(self.username, 'Заявка на осмотр')
         if self.inspection.checkApplications() != -1:
             self.inspection.calFunctions()
             self.inspection.show()
@@ -176,10 +181,13 @@ class ApplicationForm(QMainWindow, Ui_ApplicationWindow):
         self.form.SelectEmployee.insertItem(0, self.username)
         model = self.form.SelectTypeApp.model()
         if self.role == 'Ветеринар':
+            self.form.SelectTypeApp.setCurrentIndex(0)
             model.item(1).setEnabled(False) # заявка на осмотр
             model.item(2).setEnabled(False) # заявка на измененние типа корма
         elif self.role == 'Рабочий':
             model.item(0).setEnabled(False)  # заявка на списание
+            self.form.SelectTypeApp.setCurrentIndex(1)
+
 
     def settingTable(self, columns: int):
         self.form.tableWidget.setColumnCount(columns)
@@ -244,8 +252,8 @@ class ListAnimalsForm(QMainWindow, Ui_ListAnimalsWindow):
         self.form.setupUi(self)
         self.role = role
         self.OpenWindow()
-        self.showListSick()
-        self.form.comboBox.currentTextChanged.connect(self.showListSick)
+        self.showList()
+        self.form.comboBox.currentTextChanged.connect(self.showList)
 
     def OpenWindow(self):
         self.setWindowTitle('Список животных')
@@ -255,8 +263,10 @@ class ListAnimalsForm(QMainWindow, Ui_ListAnimalsWindow):
             self.form.comboBox.setCurrentIndex(1)
             self.setNotEnabled([0,3,4,5])
         elif self.role == 'Рабочий':
+            self.form.comboBox.setCurrentIndex(4)
             self.setNotEnabled([0,1,2,3])
         elif self.role == 'Заведующий предприятием':
+            self.form.comboBox.setCurrentIndex(0)
             self.setNotEnabled([1, 2, 3, 4])
 
 
@@ -266,7 +276,7 @@ class ListAnimalsForm(QMainWindow, Ui_ListAnimalsWindow):
             model.item(i).setEnabled(False)
 
 
-    def settingTableForVet(self, columns: int):
+    def settingTable(self, columns: int):
         self.form.tableWidget.setColumnCount(columns)
         header = self.form.tableWidget.horizontalHeader()
         for i in range(columns):
@@ -274,24 +284,39 @@ class ListAnimalsForm(QMainWindow, Ui_ListAnimalsWindow):
                 header.setSectionResizeMode(i, QHeaderView.Stretch)
             else:
                 header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
-        self.form.tableWidget.setHorizontalHeaderLabels(['Номер','Тип', 'Последний осмотр', 'Корм', 'Статус', 'Возраст', 'Пол'])
+        if(self.role == 'Ветеринар'):
+            self.form.tableWidget.setHorizontalHeaderLabels(['Номер','Тип', 'Последний осмотр', 'Корм', 'Статус', 'Возраст', 'Пол'])
+        elif(self.role == 'Рабочий'):
+            self.form.tableWidget.setHorizontalHeaderLabels(['Номер', 'Тип', 'Корм', 'Возраст', 'Пол'])
 
 
-    def showListSick(self):
+
+    def showList(self):
         self.form.tableWidget.clear()
         self.form.tableWidget.setRowCount(0)
         self.form.tableWidget.setColumnCount(0)
         index = self.form.comboBox.currentIndex()
-        if index == 1:
-            data = model.listSickAndHealthyAnimals(False)
-        elif index == 2:
-            data = model.listSickAndHealthyAnimals(True)
-        self.settingTableForVet(len(data[0]))
-        for i in range(len(data)):
+
+        if index == 1 or index == 2:
+            if index == 1:
+                self.data = model.listSickAndHealthyAnimals(False)
+            elif index == 2:
+                self.data = model.listSickAndHealthyAnimals(True)
+        elif index == 4 or index == 5:
+            if index == 4:
+                self.data = model.listHungryAndFed(True)
+            elif index == 5:
+                self.data = model.listHungryAndFed(False)
+
+        if len(self.data) == 0:
+            return
+        self.settingTable(len(self.data[0]))
+
+        for i in range(len(self.data)):
             rowCount = self.form.tableWidget.rowCount()
             self.form.tableWidget.insertRow(rowCount)
-            for j in range(len(data[i])):
-                item = QTableWidgetItem(f'{data[i][j]}')
+            for j in range(len(self.data[i])):
+                item = QTableWidgetItem(f'{self.data[i][j]}')
                 item.setTextAlignment(PyQt5.QtCore.Qt.AlignCenter)
                 self.form.tableWidget.setItem(rowCount, j, item)
 
@@ -348,7 +373,7 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
         self.form.tableWidget.clear()
         self.form.tableWidget.setRowCount(0)
         self.settingTable()
-        num = self.numApp
+        num = int(self.form.selectApp.currentText().split('№')[1])
         animals = model.listAnimalsFromApplication(num)
         info_animals = []
         for i in range(len(animals)):
@@ -377,15 +402,17 @@ class ChangeFeedForm(QMainWindow, Ui_ChangeFeedSecond):
 
 
     def btnConfirmClick(self):
-        data = {}
+        feedTitles = []
+        numAnimals = []
         rows = self.form.tableWidget.rowCount()
         columns = self.form.tableWidget.columnCount()
         for i in range(rows):
             feed = self.form.tableWidget.cellWidget(i, columns-1).currentText()
-            numAnimal = int(self.form.tableWidget.item(i, 0).text())
-            data[numAnimal] = self.feed[feed] + 1
-        res = model.updateFeedAndRmApplication(data, self.numApp)
-        if res == 1:
+            num = int(self.form.tableWidget.item(i, 0).text())
+            feedTitles.append(feed)
+            numAnimals.append(num)
+        res = model.changeFeed(self.username, self.numApp, numAnimals, feedTitles)
+        if res == 0:
             showMessage("Уведомление", 'Изменения успешно внесены !')
             self.close()
 
@@ -448,11 +475,12 @@ class GraphForm(QMainWindow, Ui_GraphWindow):
 
 
 class InspectionForm(QMainWindow, Ui_InspectionWindow):
-    def __init__(self, username):
+    def __init__(self, username, typeApplication):
         super().__init__()
         self.form = Ui_InspectionWindow()
         self.form.setupUi(self)
         self.username = username
+        self.typeApp = typeApplication
 
 
     def calFunctions(self):
@@ -463,7 +491,9 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
 
 
     def checkApplications(self):
-        if len(self.getDataFromComboboxes()) != 0:
+        applications = model.listApplications(self.typeApp)
+        list = [i for i in applications if 'Заявка на осмотр' in i]
+        if len(list) != 0:
             return 1
         else:
             showMessage('Ошибка', "Отстутсвуют заявки на осмотр !")
@@ -476,7 +506,7 @@ class InspectionForm(QMainWindow, Ui_InspectionWindow):
         self.setWindowIcon(QIcon('view/icons/page/stethoscope.png'))
         self.form.SelectEmployee.addItem(self.username)
         self.data = model.listAppInspection()
-        if len(self.data) != 0:
+        if len(self.data) == 0:
             return -1
         app = self.getListApplications()
         for data in app:

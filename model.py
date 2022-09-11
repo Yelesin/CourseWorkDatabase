@@ -34,8 +34,11 @@ def closeConnection():
 
 
 def loginCheck(login:str, passwd:str, user = 'login') -> [str, str, ()]: # [ФИО пользователя, роль пользователя, информация о сотруднике]
-    login = 'Miheev'
-    passwd = 'StenOptiAvto6'
+    login = 'Zaharov'
+    passwd = 'ZhilBledOtve0'
+    #login = 'Zhuravlev'
+    #passwd = 'SaraUpolAnga4'
+
     with __connection:
         try:
             __cursor = __connection.cursor()
@@ -114,7 +117,7 @@ def AddApplication(typeApplication: str, data: [], employee: str) -> int: # за
            return -1
 
 
-def listSickAndHealthyAnimals(isHealthy: bool): # возвращает список больных или здоровых животных
+def listSickAndHealthyAnimals(isHealthy: bool) -> []: # возвращает список больных или здоровых животных
     with __connection:
         try:
             __cursor = __connection.cursor()
@@ -129,6 +132,21 @@ def listSickAndHealthyAnimals(isHealthy: bool): # возвращает спис�
             print(e)
 
 
+def listHungryAndFed(isHungry: bool):
+    with __connection:
+        try:
+            __cursor = __connection.cursor()
+            if isHungry:
+                tmp = sql.SQL(f'SELECT * FROM info_animals_hungry')
+            else:
+                tmp = sql.SQL(f'SELECT * FROM info_animals_not_hungry')
+            __cursor.execute(tmp, ())
+            dat = __cursor.fetchall()
+            return dat
+        except psycopg2.Error as e:
+            print(e)
+
+
 def listApplications(typeApplication: str): # возвращает все заявки
     with __connection:
         try:
@@ -136,6 +154,7 @@ def listApplications(typeApplication: str): # возвращает все зая
             tmp = sql.SQL(f'SELECT * FROM get_applications(%s)')
             __cursor.execute(tmp, (typeApplication,))
             dat = __cursor.fetchall()
+            #print(dat)
             return dat
         except psycopg2.Error as e:
             print(e)
@@ -153,18 +172,13 @@ def listAnimalsFromApplication(keyApplication: int): # Список животн
             print(e)
 
 
-def updateFeedAndRmApplication(numAndFeed: {}, numApplication):
+def changeFeed(employee: str, numApplication : int, numAnimals : [], feedAnimals: []):
     with __connection:
         try:
             __cursor = __connection.cursor()
-            sql1 = 'UPDATE animal SET key_feed = %s WHERE numberanimal = %s'
-            sql2 = 'DELETE FROM clarification_to_app WHERE keyapplication= %s'
-            sql3 = 'DELETE FROM application WHERE keyapplication = %s'
-            for numAnimal, feed in numAndFeed.items():
-                __cursor.execute(sql1, (feed,numAnimal,))
-                __cursor.execute(sql2, (numApplication,))
-                __cursor.execute(sql3, (numApplication,))
-            return 1
+            sql = 'SELECT * FROM change_feed(%s, %s, %s, %s)'
+            __cursor.execute(sql, (employee, numApplication, numAnimals, feedAnimals,))
+            return 0
         except psycopg2.Error as e:
             print(e)
 
