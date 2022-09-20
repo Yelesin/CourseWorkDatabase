@@ -81,7 +81,7 @@ class Ui_ListAnimalsWindow(object):
     def retranslateUi(self, ListAnimalsWindow):
         _translate = QtCore.QCoreApplication.translate
         ListAnimalsWindow.setWindowTitle(_translate("ListAnimalsWindow", "MainWindow"))
-        self.comboBox.setItemText(0, _translate("ListAnimalsWindow", "Все животные"))
+        self.comboBox.setItemText(0, _translate("ListAnimalsWindow", "Животные на ферме"))
         self.comboBox.setItemText(1, _translate("ListAnimalsWindow", "Больные животные"))
         self.comboBox.setItemText(2, _translate("ListAnimalsWindow", "Здоровые животные"))
         self.comboBox.setItemText(3, _translate("ListAnimalsWindow", "Списанные животные"))

@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(795, 576)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_ListEmployee(object):
+    def setupUi(self, ListEmployee):
+        ListEmployee.setObjectName("ListEmployee")
+        ListEmployee.resize(1112, 584)
+        self.centralwidget = QtWidgets.QWidget(ListEmployee)
         self.centralwidget.setStyleSheet("QWidget{\n"
 "    background-color: #242424;\n"
 "    font-family: Roboto;\n"
@@ -54,10 +54,15 @@ class Ui_MainWindow(object):
         self.verticalLayout.addItem(spacerItem4)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem5)
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setMinimumSize(QtCore.QSize(700, 400))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy)
+        self.tableWidget.setMinimumSize(QtCore.QSize(1000, 400))
         self.tableWidget.setStyleSheet("QTableWidget{\n"
 "    background-color:  #313335;\n"
 "}")
@@ -65,19 +70,19 @@ class Ui_MainWindow(object):
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.horizontalLayout.addWidget(self.tableWidget)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem6)
         self.verticalLayout.addLayout(self.horizontalLayout)
         spacerItem7 = QtWidgets.QSpacerItem(20, 27, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem7)
-        MainWindow.setCentralWidget(self.centralwidget)
+        ListEmployee.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(ListEmployee)
+        QtCore.QMetaObject.connectSlotsByName(ListEmployee)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, ListEmployee):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Статус"))
-        self.comboBox.setItemText(0, _translate("MainWindow", "Работают"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Не работают"))
+        ListEmployee.setWindowTitle(_translate("ListEmployee", "MainWindow"))
+        self.label.setText(_translate("ListEmployee", "Статус"))
+        self.comboBox.setItemText(0, _translate("ListEmployee", "Работают"))
+        self.comboBox.setItemText(1, _translate("ListEmployee", "Не работают"))

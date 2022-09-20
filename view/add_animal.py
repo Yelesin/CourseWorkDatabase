@@ -128,17 +128,17 @@ class Ui_AddAnimalForm(object):
         self.horizontalLayout_4.addWidget(self.label_4)
         spacerItem14 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem14)
-        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox.setMinimumSize(QtCore.QSize(250, 40))
-        self.doubleSpinBox.setMaximumSize(QtCore.QSize(600, 16777215))
-        self.doubleSpinBox.setStyleSheet("QDoubleSpinBox\n"
+        self.WeightBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.WeightBox.setMinimumSize(QtCore.QSize(250, 40))
+        self.WeightBox.setMaximumSize(QtCore.QSize(600, 16777215))
+        self.WeightBox.setStyleSheet("QDoubleSpinBox\n"
 "{\n"
 "    background-color:  #313335;\n"
 "}")
-        self.doubleSpinBox.setDecimals(0)
-        self.doubleSpinBox.setMaximum(1000.0)
-        self.doubleSpinBox.setObjectName("doubleSpinBox")
-        self.horizontalLayout_4.addWidget(self.doubleSpinBox)
+        self.WeightBox.setDecimals(0)
+        self.WeightBox.setMaximum(1000.0)
+        self.WeightBox.setObjectName("WeightBox")
+        self.horizontalLayout_4.addWidget(self.WeightBox)
         spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem15)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
@@ -155,17 +155,17 @@ class Ui_AddAnimalForm(object):
         self.horizontalLayout_5.addWidget(self.label_5)
         spacerItem18 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem18)
-        self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox_2.setMinimumSize(QtCore.QSize(250, 40))
-        self.doubleSpinBox_2.setMaximumSize(QtCore.QSize(600, 16777215))
-        self.doubleSpinBox_2.setStyleSheet("QDoubleSpinBox\n"
+        self.AgeBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.AgeBox.setMinimumSize(QtCore.QSize(250, 40))
+        self.AgeBox.setMaximumSize(QtCore.QSize(600, 16777215))
+        self.AgeBox.setStyleSheet("QDoubleSpinBox\n"
 "{\n"
 "    background-color:  #313335;\n"
 "}")
-        self.doubleSpinBox_2.setDecimals(0)
-        self.doubleSpinBox_2.setMaximum(1000.0)
-        self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
-        self.horizontalLayout_5.addWidget(self.doubleSpinBox_2)
+        self.AgeBox.setDecimals(0)
+        self.AgeBox.setMaximum(1000.0)
+        self.AgeBox.setObjectName("AgeBox")
+        self.horizontalLayout_5.addWidget(self.AgeBox)
         spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem19)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
@@ -276,5 +276,5 @@ class Ui_AddAnimalForm(object):
         self.combo_gender.setItemText(1, _translate("AddAnimalForm", "Женский"))
         self.label_4.setText(_translate("AddAnimalForm", "Вес"))
         self.label_5.setText(_translate("AddAnimalForm", "Возраст"))
-        self.btn_confirm.setText(_translate("AddAnimalForm", "Submit"))
+        self.btn_confirm.setText(_translate("AddAnimalForm", "Добавить"))
         self.btn_confirm.setShortcut(_translate("AddAnimalForm", "Return"))

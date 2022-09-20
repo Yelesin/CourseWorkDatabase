@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>lbl_startDate</class>
- <widget class="QMainWindow" name="lbl_startDate">
+ <class>AddEmployee</class>
+ <widget class="QMainWindow" name="AddEmployee">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -613,7 +613,7 @@ background-color:  #5C6164;
 }</string>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string>Добавить</string>
         </property>
         <property name="shortcut">
          <string>Return</string>

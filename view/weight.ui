@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>WeightForm</class>
+ <widget class="QMainWindow" name="WeightForm">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>683</width>
-    <height>571</height>
+    <width>734</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -202,6 +202,9 @@
 	background-color:  #313335;
 }</string>
         </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
         <property name="maximum">
          <double>100000.000000000000000</double>
         </property>
@@ -322,12 +325,21 @@
        <widget class="QLabel" name="img_animal">
         <property name="minimumSize">
          <size>
+          <width>200</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
           <width>150</width>
           <height>150</height>
          </size>
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -348,12 +360,21 @@
        <widget class="QLabel" name="img_feed">
         <property name="minimumSize">
          <size>
-          <width>150</width>
-          <height>150</height>
+          <width>200</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>200</height>
          </size>
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -374,12 +395,21 @@
        <widget class="QLabel" name="img_gender">
         <property name="minimumSize">
          <size>
-          <width>150</width>
-          <height>150</height>
+          <width>200</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>200</height>
          </size>
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

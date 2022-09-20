@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 471)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_rmAnimal(object):
+    def setupUi(self, rmAnimal):
+        rmAnimal.setObjectName("rmAnimal")
+        rmAnimal.resize(800, 522)
+        self.centralwidget = QtWidgets.QWidget(rmAnimal)
         self.centralwidget.setStyleSheet("QWidget{\n"
 "    background-color: #242424;\n"
 "    font-family: Roboto;\n"
@@ -38,17 +38,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.label)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem2)
-        self.numberAnimal = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.numberAnimal.setMinimumSize(QtCore.QSize(250, 40))
-        self.numberAnimal.setStyleSheet("QDoubleSpinBox\n"
-"{\n"
-"    background-color:  #313335;\n"
-"}")
-        self.numberAnimal.setDecimals(0)
-        self.numberAnimal.setMinimum(1.0)
-        self.numberAnimal.setMaximum(10000.0)
-        self.numberAnimal.setObjectName("numberAnimal")
-        self.horizontalLayout_5.addWidget(self.numberAnimal)
+        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBox.setObjectName("comboBox")
+        self.horizontalLayout_5.addWidget(self.comboBox)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem3)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
@@ -72,21 +64,43 @@ class Ui_MainWindow(object):
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem8)
         self.img_animal = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.img_animal.sizePolicy().hasHeightForWidth())
+        self.img_animal.setSizePolicy(sizePolicy)
         self.img_animal.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_animal.setMaximumSize(QtCore.QSize(200, 200))
         self.img_animal.setText("")
         self.img_animal.setObjectName("img_animal")
         self.horizontalLayout.addWidget(self.img_animal)
         spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem9)
         self.img_feed = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.img_feed.sizePolicy().hasHeightForWidth())
+        self.img_feed.setSizePolicy(sizePolicy)
         self.img_feed.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_feed.setMaximumSize(QtCore.QSize(200, 200))
+        self.img_feed.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.img_feed.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.img_feed.setText("")
+        self.img_feed.setScaledContents(True)
+        self.img_feed.setAlignment(QtCore.Qt.AlignCenter)
         self.img_feed.setObjectName("img_feed")
         self.horizontalLayout.addWidget(self.img_feed)
         spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem10)
         self.img_gender = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.img_gender.sizePolicy().hasHeightForWidth())
+        self.img_gender.setSizePolicy(sizePolicy)
         self.img_gender.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_gender.setMaximumSize(QtCore.QSize(200, 200))
         self.img_gender.setText("")
         self.img_gender.setObjectName("img_gender")
         self.horizontalLayout.addWidget(self.img_gender)
@@ -128,17 +142,17 @@ class Ui_MainWindow(object):
         spacerItem14 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem14)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        rmAnimal.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(rmAnimal)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        rmAnimal.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(rmAnimal)
+        QtCore.QMetaObject.connectSlotsByName(rmAnimal)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, rmAnimal):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Номер животного"))
-        self.infoAnimal.setText(_translate("MainWindow", "Инфа о животном"))
-        self.btn_confirm.setText(_translate("MainWindow", "Подтвердить"))
+        rmAnimal.setWindowTitle(_translate("rmAnimal", "MainWindow"))
+        self.label.setText(_translate("rmAnimal", "Номер животного"))
+        self.infoAnimal.setText(_translate("rmAnimal", "Инфа о животном"))
+        self.btn_confirm.setText(_translate("rmAnimal", "Подтвердить"))

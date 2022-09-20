@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(683, 607)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_WeightForm(object):
+    def setupUi(self, WeightForm):
+        WeightForm.setObjectName("WeightForm")
+        WeightForm.resize(734, 565)
+        self.centralwidget = QtWidgets.QWidget(WeightForm)
         self.centralwidget.setStyleSheet("QWidget{\n"
 "    background-color: #242424;\n"
 "    font-family: Roboto;\n"
@@ -70,6 +70,7 @@ class Ui_MainWindow(object):
 "{\n"
 "    background-color:  #313335;\n"
 "}")
+        self.Weight.setDecimals(0)
         self.Weight.setMaximum(100000.0)
         self.Weight.setObjectName("Weight")
         self.horizontalLayout_4.addWidget(self.Weight)
@@ -96,22 +97,28 @@ class Ui_MainWindow(object):
         spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem12)
         self.img_animal = QtWidgets.QLabel(self.centralwidget)
-        self.img_animal.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_animal.setMinimumSize(QtCore.QSize(200, 200))
+        self.img_animal.setMaximumSize(QtCore.QSize(150, 150))
         self.img_animal.setText("")
+        self.img_animal.setScaledContents(True)
         self.img_animal.setObjectName("img_animal")
         self.horizontalLayout.addWidget(self.img_animal)
         spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem13)
         self.img_feed = QtWidgets.QLabel(self.centralwidget)
-        self.img_feed.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_feed.setMinimumSize(QtCore.QSize(200, 200))
+        self.img_feed.setMaximumSize(QtCore.QSize(200, 200))
         self.img_feed.setText("")
+        self.img_feed.setScaledContents(True)
         self.img_feed.setObjectName("img_feed")
         self.horizontalLayout.addWidget(self.img_feed)
         spacerItem14 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem14)
         self.img_gender = QtWidgets.QLabel(self.centralwidget)
-        self.img_gender.setMinimumSize(QtCore.QSize(150, 150))
+        self.img_gender.setMinimumSize(QtCore.QSize(200, 200))
+        self.img_gender.setMaximumSize(QtCore.QSize(200, 200))
         self.img_gender.setText("")
+        self.img_gender.setScaledContents(True)
         self.img_gender.setObjectName("img_gender")
         self.horizontalLayout.addWidget(self.img_gender)
         spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -154,15 +161,15 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         spacerItem19 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         self.verticalLayout.addItem(spacerItem19)
-        MainWindow.setCentralWidget(self.centralwidget)
+        WeightForm.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(WeightForm)
+        QtCore.QMetaObject.connectSlotsByName(WeightForm)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, WeightForm):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Номер животного"))
-        self.label_3.setText(_translate("MainWindow", "Текущий вес"))
-        self.InfoAnimal.setText(_translate("MainWindow", "Инфа о животном"))
-        self.btn_confirm.setText(_translate("MainWindow", "Подтвердить"))
+        WeightForm.setWindowTitle(_translate("WeightForm", "MainWindow"))
+        self.label.setText(_translate("WeightForm", "Номер животного"))
+        self.label_3.setText(_translate("WeightForm", "Текущий вес"))
+        self.InfoAnimal.setText(_translate("WeightForm", "Инфа о животном"))
+        self.btn_confirm.setText(_translate("WeightForm", "Подтвердить"))
